@@ -1,0 +1,22 @@
+version: '3'
+
+services:
+
+  mongo:
+    image: mongo  
+
+  app:
+    image: bernardovale/todo-app:$GIT_COMMIT
+    build: 
+      dockerfile: ci/staging/Dockerfile
+      context: .
+    links: 
+      - mongo
+    environment: 
+      - MONGODB_HOST=mongo
+      - APP_ENV=staging
+      - GIT_COMMIT=$GIT_COMMIT
+    ports:
+      - 5000:5000
+    working_dir: /usr/src/app
+    command: python run.py

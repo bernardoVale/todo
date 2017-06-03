@@ -1,0 +1,9 @@
+venv/
+*.pyc
+.idea/
+.coverage
+.cache/
+*__pycache__/
+
+tests/acceptance/log/*
+!tests/acceptance/log/.gitkeep

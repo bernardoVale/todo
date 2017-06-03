@@ -1,0 +1,108 @@
+# TS Test Docker Compose
+#####
+# To use it you need to have docker on your machine:
+#   https://docs.docker.com/engine/installation/linux/
+#   https://docs.docker.com/docker-for-mac/
+#   https://docs.docker.com/docker-for-windows/
+#
+# Then start the compose using detached mode to avoid timeout:
+#   docker-compose up -d
+#   docker-compose logs -f  # to follow the output
+#   docker-compose logs -f --tail=10 selenium_hub # to follow the selenium_hub output
+#   docker-compose restart selenium_hub # to restart the selenium_hub service
+#
+# You can run any command at any docker using:
+#   docker-compose exec <service id> <command>
+
+# docker compose version, don't touch
+version: '3'
+
+services:
+
+  # Selenium hub and nodes
+  #####
+  # This will be used to run the test in remote mode from the bellow box service.
+  # To access it, just open:
+  #   http://localhost:4444/wd/hub
+  # More details at:
+  #   https://github.com/SeleniumHQ/docker-selenium
+  selenium_hub:
+    image: selenium/hub:latest
+
+  node-chrome:
+    image: selenium/node-chrome:latest
+    environment:
+      - HUB_PORT_4444_TCP_ADDR=selenium_hub
+      - HUB_PORT_4444_TCP_PORT=4444
+    links:
+      - selenium_hub
+
+  node-firefox:
+    image: selenium/node-firefox:latest
+    environment:
+      - HUB_PORT_4444_TCP_ADDR=selenium_hub
+      - HUB_PORT_4444_TCP_PORT=4444
+    links:
+      - selenium_hub
+
+  # Cucumber service
+  #####
+  # Fast way to execute cucumber commands without hold the environments values
+  # like the box service.
+  #     docker-compose run --rm cucumber
+  cucumber:
+    build: .
+    volumes:
+      - bundle_data:/bundle
+    environment:
+      - BROWSER=firefox
+      - BUNDLE_PATH=/bundle
+      - SELENIUM_SERVER=selenium_hub
+      - CURRENT_DRIVER=remote
+      - URL
+      - TODO_STAGING_URL
+      - TODO_PROD_URL
+    entrypoint: ./bin/docker-cucumber.rb
+    depends_on:
+      - node-firefox
+    external_links: 
+      - todo-accept:app
+    links:
+      - selenium_hub
+      
+  # Cucumber service using chrome
+  #####
+  # Fast way to execute cucumber commands without hold the environments values
+  # like the box service.
+  #     docker-compose run --rm cuchromer
+  cuchromer:
+    build: .
+    working_dir: /app
+    entrypoint: ./bin/docker-cucumber.rb
+    environment:
+      - BROWSER=chrome
+      - BUNDLE_PATH=/bundle
+      - SELENIUM_SERVER=selenium_hub
+      - CURRENT_DRIVER=remote
+      - URL
+      - TODO_STAGING_URL
+      - TODO_PROD_URL
+    volumes:
+      - bundle_data:/bundle
+    external_links: 
+      - todo-accept:app
+    depends_on:
+      - node-chrome
+    links:
+      - selenium_hub
+
+networks: 
+  default:
+    external: 
+      name: agile
+
+volumes:
+  # Bundle Gem Cache
+  #####
+  # This will cache the dependences to save time for each initialization.
+  bundle_data:

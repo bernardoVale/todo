@@ -1,0 +1,23 @@
+version: '3'
+
+services:
+
+  mongo:
+    image: mongo  
+
+  app:
+    image: todo-dev:$GIT_COMMIT
+    build: 
+      dockerfile: ci/dev/Dockerfile
+      context: .
+    links: 
+      - mongo
+    environment: 
+      - MONGODB_HOST=mongo
+      - APP_ENV=dev
+    volumes: 
+     - .:/usr/src/app
+    ports:
+      - 5000:5000
+    working_dir: /usr/src/app
+    command: python run.py
