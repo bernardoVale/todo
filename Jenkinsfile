@@ -10,7 +10,7 @@ node {
     stage('Unit Tests'){
       app.inside{
         sh 'pytest tests/unit --junit-xml results/unit.xml'
-        junit '**/results/*.xml'
+        junit '**/results/unit.xml'
       }
     }
     stage('Deploy Staging'){
@@ -20,7 +20,7 @@ node {
         docker.image('mongo').withRun(){ m ->
           app.inside("-e MONGODB_HOST=mongo -e APP_ENV=staging --link ${m.id}:mongo"){
             sh 'pytest tests/functional --junit-xml results/functional.xml'
-            junit '**/results/*.xml'
+            junit '**/results/functional.xml'
           }
         }
     }

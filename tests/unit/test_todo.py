@@ -4,6 +4,8 @@ from app.controllers import index
 from app.models import Todo
 
 
+# Sorry guys, didn't had time :)
+
 class TodoUnit(TestCase):
 
     def setUp(self):
