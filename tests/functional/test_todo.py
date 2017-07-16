@@ -26,7 +26,7 @@ class TodoTestCase(TestCase):
 
     def test_index(self):
         rv = self.client.get('/')
-        assert "Agile Testers Todo App" in rv.data
+        assert "ACOB Todo App" in rv.data
 
     def test_empty(self):
         rv = self.client.get('/')

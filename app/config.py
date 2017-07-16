@@ -13,16 +13,17 @@ class Config(object):
     CSRF_ENABLED = True
     CSRF_SESSION_KEY = "secret"
 
+    with open('version.txt') as stream:
+        APP_VERSION = stream.read()
+        
 
 class ProductionConfig(Config):
-    APP_VERSION = os.environ.get("APP_VERSION", "latest")
     PORT = 8001
 
 
 class StagingConfig(Config):
-    APP_VERSION = os.environ.get("GIT_COMMIT", "latest")
+    pass
 
 
 class DevConfig(Config):
-    APP_VERSION = os.environ.get("GIT_COMMIT", "latest")
     DEBUG = True

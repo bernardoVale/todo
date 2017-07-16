@@ -65,8 +65,8 @@ services:
     entrypoint: ./bin/docker-cucumber.rb
     depends_on:
       - node-firefox
-    external_links: 
-      - todo-accept:app
+    # external_links: 
+    #   - todo-accept:app
     links:
       - selenium_hub
       
@@ -89,17 +89,17 @@ services:
       - TODO_PROD_URL
     volumes:
       - bundle_data:/bundle
-    external_links: 
-      - todo-accept:app
+    # external_links: 
+    #   - todo-accept:app
     depends_on:
       - node-chrome
     links:
       - selenium_hub
 
-networks: 
-  default:
-    external: 
-      name: agile
+# networks: 
+#   default:
+#     external: 
+#       name: agile
 
 volumes:
   # Bundle Gem Cache
