@@ -8,14 +8,15 @@ services:
   app:
     image: bernardovale/todo-app:$GIT_COMMIT
     build: 
-      dockerfile: ci/staging/Dockerfile
+      dockerfile: Dockerfile
       context: .
+      args:
+        - APP_VERSION=$APP_VERSION
     links: 
       - mongo
     environment: 
-      - MONGODB_HOST=mongo
+      - MONGODB_HOST=mongodb://todo:7hgQQthzgWgasazl@cluster0-shard-00-00-lmzyw.mongodb.net:27017,cluster0-shard-00-01-lmzyw.mongodb.net:27017,cluster0-shard-00-02-lmzyw.mongodb.net:27017/todo?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin
       - APP_ENV=staging
-      - GIT_COMMIT=$GIT_COMMIT
     ports:
       - 5000:5000
     working_dir: /usr/src/app

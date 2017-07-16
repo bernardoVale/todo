@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: todo
+data:
+  MONGODB_HOST: "mongodb://todo:7hgQQthzgWgasazl@cluster0-shard-00-00-lmzyw.mongodb.net:27017,cluster0-shard-00-01-lmzyw.mongodb.net:27017,cluster0-shard-00-02-lmzyw.mongodb.net:27017/todo?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin"
+  APP_ENV: production

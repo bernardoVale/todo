@@ -1,0 +1,34 @@
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: todo-green
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: todo
+        tier: backend
+        color: green
+    spec:
+      containers:
+      - name: todo
+        image: bernardovale/todo-app:__VERSION__
+        ports:
+        - containerPort: 8001
+        envFrom:
+          - configMapRef:
+              name: todo
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: todo-green
+spec:
+  selector:
+    app: todo
+    tier: backend
+    color: green
+  ports:
+    - protocol: TCP
+      port: 8001
