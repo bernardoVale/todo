@@ -1,19 +1,18 @@
 #!groovy
 
 @Library('pipeline')
-def pipe = new com.avenuecode.pipeline.Utils()
+// Instantiating ac library with application name
+def pipe = new com.avenuecode.kubernetes.Pipeline('todo')
           
 
 node('ac-release-website'){
     checkout scm
-    gitCommit = sh(returnStdout: true, script: 'git rev-parse HEAD').trim()
-    branchName = sh(returnStdout: true, script: 'git rev-parse --abbrev-ref HEAD').trim()
-    def appColor = pipe.getColor('todo')
-    println "Current color: ${appColor}"
-    
+
+    println "Current commit: ${pipe.commit}"
+    println "Current color: ${pipe.color}"
 
     stage('Build'){
-      app = docker.build("bernardovale/todo-app:$gitCommit", "--build-arg APP_VERSION=$gitCommit $WORKSPACE")
+      app = docker.build("bernardovale/todo-app:${pipe.commit}", "--build-arg APP_VERSION=${pipe.commit} $WORKSPACE")
     }
     stage('Unit Tests'){
         docker.image('mongo').withRun(){ m ->
@@ -30,15 +29,14 @@ node('ac-release-website'){
     }
     if (env.BRANCH_NAME == "master" ) {
       stage('Deploy'){
-        newColor = (appColor == 'green') ? 'blue' : 'green'
-        println "Updating todo app to version:${gitCommit} on color: ${newColor}"
-        sh " sed \"s/__VERSION__/$gitCommit/g\" deploy/${newColor}.yml | kubectl apply -f - "
+        println "Updating todo app to version:${pipe.commit} on color: ${pipe.next}"
+        sh "sed \"s/__VERSION__/${pipe.commit}/g\" deploy/${pipe.next}.yml | kubectl apply -f - "
       }
       stage('Smoke Tests'){
         dir('tests/acceptance'){
           try{
             sh 'docker-compose build'  
-            sh "URL=https://todo-${newColor}.avenuecode.com docker-compose run --rm cuchromer features"
+            sh "URL=https://todo-${pipe.next}.avenuecode.com docker-compose run --rm cuchromer features"
           }finally{
             sh 'docker-compose down'
           }
@@ -48,7 +46,7 @@ node('ac-release-website'){
       //   input message: 'Switch application color?', ok: 'Yes!'
       // }
       stage('Switch'){
-        pipe.switchOver('todo')
+        pipe.switchOver()
       }
     }
 }
