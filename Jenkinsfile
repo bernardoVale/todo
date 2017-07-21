@@ -30,7 +30,11 @@ node('ac-release-website'){
     if (env.BRANCH_NAME == "master" ) {
       stage('Deploy'){
         println "Updating todo app to version:${pipe.commit} on color: ${pipe.next}"
+<<<<<<< Updated upstream
         sh "sed \"s/__VERSION__/${pipe.commit}/g\" deploy/${pipe.next}.yml | kubectl apply -f - "
+=======
+        sh "sed \"s/__VERSION__/${pipe.commit}/g\" deploy/${pipe.environment}/${pipe.next}.yml | kubectl apply -f - "
+>>>>>>> Stashed changes
       }
       stage('Smoke Tests'){
         dir('tests/acceptance'){
