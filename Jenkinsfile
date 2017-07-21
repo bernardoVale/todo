@@ -3,7 +3,6 @@
 @Library('pipeline')
 // Instantiating ac library with application name
 def pipe = new com.avenuecode.kubernetes.Pipeline('todo')
-def deployFrom = (env.BRANCH_NAME == 'develop') ? 'staging' : 'production'
           
 
 node('ac-release-website'){
@@ -12,7 +11,7 @@ node('ac-release-website'){
     println "Current commit: ${pipe.commit}"
     println "Current color: ${pipe.color}"
     // Sets ingress environment
-    pipe.environment = deployFrom
+    pipe.environment = 'default'
 
     stage('Build'){
       app = docker.build("bernardovale/todo-app:${pipe.commit}", "--build-arg APP_VERSION=${pipe.commit} $WORKSPACE")
