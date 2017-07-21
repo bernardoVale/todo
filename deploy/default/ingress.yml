@@ -2,6 +2,7 @@ apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
   name: todo
+  namespace: default
   annotations:
     kubernetes.io/ingress.class: traefik
 spec:
@@ -11,17 +12,17 @@ spec:
       paths:
       - backend:
           # To switch to blue/green update the serviceName
-          serviceName: todo-green
+          serviceName: todo-default-green
           servicePort: 8001
   - host: todo-green.avenuecode.com
     http:
       paths:
       - backend:
-          serviceName: todo-green
+          serviceName: todo-default-green
           servicePort: 8001
   - host: todo-blue.avenuecode.com
     http:
       paths:
       - backend:
-          serviceName: todo-blue
+          serviceName: todo-default-blue
           servicePort: 8001

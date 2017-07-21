@@ -1,7 +1,7 @@
 apiVersion: apps/v1beta1
 kind: Deployment
 metadata:
-  name: todo-green
+  name: todo-blue
 spec:
   replicas: 1
   template:
@@ -9,7 +9,7 @@ spec:
       labels:
         app: todo
         tier: backend
-        color: green
+        color: blue
     spec:
       containers:
       - name: todo
@@ -23,12 +23,12 @@ spec:
 kind: Service
 apiVersion: v1
 metadata:
-  name: todo-green
+  name: todo-default-blue
 spec:
   selector:
     app: todo
     tier: backend
-    color: green
+    color: blue
   ports:
     - protocol: TCP
       port: 8001

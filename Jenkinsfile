@@ -10,6 +10,8 @@ node('ac-release-website'){
 
     println "Current commit: ${pipe.commit}"
     println "Current color: ${pipe.color}"
+    // Sets ingress environment
+    pipe.environment = 'default'
 
     stage('Build'){
       app = docker.build("bernardovale/todo-app:${pipe.commit}", "--build-arg APP_VERSION=${pipe.commit} $WORKSPACE")
@@ -30,11 +32,7 @@ node('ac-release-website'){
     if (env.BRANCH_NAME == "master" ) {
       stage('Deploy'){
         println "Updating todo app to version:${pipe.commit} on color: ${pipe.next}"
-<<<<<<< Updated upstream
-        sh "sed \"s/__VERSION__/${pipe.commit}/g\" deploy/${pipe.next}.yml | kubectl apply -f - "
-=======
         sh "sed \"s/__VERSION__/${pipe.commit}/g\" deploy/${pipe.environment}/${pipe.next}.yml | kubectl apply -f - "
->>>>>>> Stashed changes
       }
       stage('Smoke Tests'){
         dir('tests/acceptance'){
