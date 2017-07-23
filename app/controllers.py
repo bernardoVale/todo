@@ -13,12 +13,16 @@ def record_params(setup_state):
 def app_version():
     return main.config['APP_VERSION']
 
+def hostname():
+    return main.config['HOSTNAME']
+
 
 @main.route('/')
 def index():
     form = TodoForm()
     todos = Todo.objects.order_by('-time')
-    return render_template("index.html", todos=todos, form=form, version=app_version())
+    return render_template("index.html", todos=todos, form=form,
+                           version=app_version(), hostname=hostname())
 
 
 @main.route('/add', methods=['POST', ])
@@ -29,7 +33,8 @@ def add():
         todo = Todo(content=content)
         todo.save()
     todos = Todo.objects.order_by('-time')
-    return render_template("index.html", todos=todos, form=form, version=app_version())
+    return render_template("index.html", todos=todos, form=form,
+                           version=app_version(), hostname=hostname())
 
 
 @main.route('/done/<string:todo_id>')
@@ -39,7 +44,8 @@ def done(todo_id):
     todo.status = 1
     todo.save()
     todos = Todo.objects.order_by('-time')
-    return render_template("index.html", todos=todos, form=form, version=app_version())
+    return render_template("index.html", todos=todos, form=form,
+                           version=app_version(), hostname=hostname())
 
 
 @main.route('/undone/<string:todo_id>')
@@ -49,7 +55,8 @@ def undone(todo_id):
     todo.status = 0
     todo.save()
     todos = Todo.objects.order_by('-time')
-    return render_template("index.html", todos=todos, form=form, version=app_version())
+    return render_template("index.html", todos=todos, form=form,
+                           version=app_version(), hostname=hostname())
 
 
 @main.route('/delete/<string:todo_id>')
@@ -58,7 +65,8 @@ def delete(todo_id):
     todo = Todo.objects.get_or_404(id=todo_id)
     todo.delete()
     todos = Todo.objects.order_by('-time')
-    return render_template("index.html", todos=todos, form=form, version=app_version())
+    return render_template("index.html", todos=todos, form=form,
+                           version=app_version(), hostname=hostname())
 
 
 @main.errorhandler(404)
