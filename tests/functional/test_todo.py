@@ -11,6 +11,7 @@ class TodoTestCase(TestCase):
     CSRF_SESSION_KEY = 'secret'
     WTF_CSRF_ENABLED = False
     APP_VERSION = 'dev'
+    HOSTNAME = 'foo'
     _mongodb_host = os.environ.get('MONGODB_HOST', 'localhost')
     MONGODB_SETTINGS = {'DB': 'todo_db', 'host': _mongodb_host, 'port': 27017}
 
