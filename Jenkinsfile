@@ -1,6 +1,6 @@
 #!groovy
 
-@Library('pipeline')
+@Library('commons')
 // Instantiating ac library with application name
 def pipe = new com.avenuecode.kubernetes.Pipeline('todo')
 import com.avenuecode.tag.Tag
