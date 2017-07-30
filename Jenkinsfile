@@ -1,19 +1,17 @@
 #!groovy
 
 @Library('commons')
-// Instantiating ac library with application name
-def pipe = new com.avenuecode.kubernetes.Pipeline('todo')
+import com.avenuecode.kubernetes.Pipeline
 import com.avenuecode.tag.Tag
 
 node('ac-release-website'){
     // Checkout sending the result variable to Tag class
     def scmVar = checkout scm
+    def pipe = new Pipeline(this, 'todo', 'default')
     def tag = new Tag(this, scmVar)
     
     println "Current color: ${pipe.color}"
-    // Sets ingress environment
-    pipe.environment = 'default'
-
+    
     // Use git commit unless we're running on master branch
     version = (env.BRANCH_NAME == 'master') ? tag.next : tag.scm.GIT_COMMIT
 
@@ -52,7 +50,7 @@ node('ac-release-website'){
             }
         }
         stage('Switch'){
-            pipe.switchOver()
+            pipe.switchColor()
         }
     }
 }
