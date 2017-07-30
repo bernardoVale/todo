@@ -124,6 +124,6 @@ command = if enabled? '--rubocop'
             }
           end
 
-sleep(70)
+sleep(10)
 puts "#{CYAN}URL=#{env_target_url} #{BLUE}#{command[:base]} #{CYAN}#{command[:args]}#{RESET}"
 exec "URL=#{env_target_url} #{command[:base]} #{command[:args]}"
