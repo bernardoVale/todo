@@ -3,12 +3,13 @@
 @Library('pipeline')
 // Instantiating ac library with application name
 def pipe = new com.avenuecode.kubernetes.Pipeline('todo')
-def tag = new com.avenuecode.tag.Tag(this)
+import com.avenuecode.tag.Tag
 
 node('ac-release-website'){
     // Checkout sending the result variable to Tag class
-    tag.scm = checkout scm
-
+    def scmVar = checkout scm
+    def tag = new Tag(this, scmVar)
+    
     println "Current color: ${pipe.color}"
     // Sets ingress environment
     pipe.environment = 'default'
