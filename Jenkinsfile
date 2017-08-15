@@ -10,8 +10,6 @@ node('ac-release-website'){
     def pipe = new Pipeline(this, 'todo', 'default')
     def tag = new Tag(this, scmVar)
     
-    println "Current color: ${pipe.color}"
-    
     // Use git commit unless we're running on master branch
     version = (env.BRANCH_NAME == 'master') ? tag.next : tag.scm.GIT_COMMIT
 
@@ -35,22 +33,23 @@ node('ac-release-website'){
         stage('Tag'){
             tag.push() // Push Tag to Gitlab
         }
-        stage('Deploy'){
-            println "Updating todo app to version:${version} on color: ${pipe.next}"
-            sh "sed \"s/__VERSION__/${version}/g\" deploy/${pipe.environment}/${pipe.next}.yml | kubectl apply -f - "
-        }
-        stage('Smoke Tests'){
-            dir('tests/acceptance'){
-                try{
-                    sh 'docker-compose build'  
-                    sh "URL=https://todo-${pipe.next}.avenuecode.com docker-compose run --rm cuchromer features"
-                }finally{
-                    sh 'docker-compose down'
-                }
-            }
-        }
-        stage('Switch'){
-            pipe.switchColor()
-        }
     }
+    //     stage('Deploy'){
+    //         println "Updating todo app to version:${version} on color: ${pipe.next}"
+    //         sh "sed \"s/__VERSION__/${version}/g\" deploy/${pipe.environment}/${pipe.next}.yml | kubectl apply -f - "
+    //     }
+    //     stage('Smoke Tests'){
+    //         dir('tests/acceptance'){
+    //             try{
+    //                 sh 'docker-compose build'  
+    //                 sh "URL=https://todo-${pipe.next}.avenuecode.com docker-compose run --rm cuchromer features"
+    //             }finally{
+    //                 sh 'docker-compose down'
+    //             }
+    //         }
+    //     }
+    //     stage('Switch'){
+    //         pipe.switchColor()
+    //     }
+    // }
 }
