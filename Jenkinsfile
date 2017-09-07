@@ -26,6 +26,9 @@ node('ac-release-website'){
             docker.withRegistry("https://index.docker.io/v1/", 'registry-bvale') {
                 app.push()
             }
+            // Setup properties file for deployer
+            writeFile file: 'deploy.properties', text: "image=${prefix}-${version}"
+            archiveArtifacts 'deploy.properties'
         }
     }
 }
