@@ -1,0 +1,21 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: newtodo-production
+  namespace: production
+  annotations:
+    kubernetes.io/ingress.class: traefik
+spec:
+  rules:
+  - host: todo.avenuecode.com
+    http:
+      paths:
+      - backend:
+          serviceName: newtodo-production
+          servicePort: 8001
+  - host: todo-preprod.avenuecode.com
+    http:
+      paths:
+      - backend:
+          serviceName: newtodo-preprod
+          servicePort: 8001

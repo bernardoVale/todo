@@ -1,0 +1,15 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: newtodo-dev
+  namespace: staging
+  annotations:
+    kubernetes.io/ingress.class: traefik
+spec:
+  rules:
+  - host: todo.avenuecode.io
+    http:
+      paths:
+      - backend:
+          serviceName: newtodo-production
+          servicePort: 8001
