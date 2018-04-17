@@ -1,17 +1,15 @@
 #!groovy
 
-node('ac-release-website'){
-    // Checkout sending the result variable to Tag class
-    def repo = checkout scm
-    
-    def publishBranches = ['develop', 'master']
+node('docker'){
 
-    // Use git commit unless we're running on master branch
-    prefix = (env.BRANCH_NAME == 'master') ? 'prod' : 'dev'
+    stage('Checkout'){
+        repo = checkout scm
+    }
+    publishBranches = ['develop', 'master']
     version = repo.GIT_COMMIT
 
     stage('Build'){
-      app = docker.build("bernardovale/todo-app:${prefix}-${version}", "--build-arg APP_VERSION=${version} $WORKSPACE")
+      app = docker.build("bernardovale/todo-app:$version", "--build-arg APP_VERSION=${version} $WORKSPACE")
     }
     stage('Unit Tests'){
         docker.image('mongo').withRun(){ m ->
