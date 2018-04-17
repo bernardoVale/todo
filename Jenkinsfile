@@ -1,6 +1,7 @@
 #!groovy
 
 node('docker'){
+    registry = 'nexus.avenuecode.com'
 
     stage('Checkout'){
         repo = checkout scm
@@ -9,7 +10,7 @@ node('docker'){
     version = repo.GIT_COMMIT
 
     stage('Build'){
-      app = docker.build("bernardovale/todo-app:$version", "--build-arg APP_VERSION=${version} $WORKSPACE")
+      app = docker.build("$registry/todo/app:$version", "--build-arg APP_VERSION=${version} $WORKSPACE")
     }
     stage('Unit Tests'){
         docker.image('mongo').withRun(){ m ->
@@ -21,12 +22,9 @@ node('docker'){
     }
     if(env.BRANCH_NAME in publishBranches){
         stage('Publish'){
-            docker.withRegistry("https://index.docker.io/v1/", 'registry-bvale') {
+            withDockerRegistry([credentialsId: 'nexus-docker', url: 'https://nexus.avenuecode.com']) {
                 app.push()
             }
-            // Setup properties file for deployer
-            writeFile file: 'deploy.properties', text: "image=${prefix}-${version}"
-            archiveArtifacts 'deploy.properties'
         }
     }
 }
